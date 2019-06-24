@@ -21,18 +21,26 @@ import matplotlib as mlp
 import matplotlib.patches
 
 os.chdir("./handwritten_digit_recognition/")
-from wide_resnet_28_10 import WideResNet28_10
+# from wide_resnet_28_10 import WideResNet28_10
+from mobilenet import MobileNet
 from utils import load_mnist
 os.chdir("../")
 
 PATH = './handwritten_digit_recognition/models/'
-model_name = "WideResNet28_10"
-model=WideResNet28_10()
+#model_name = "WideResNet28_10"
+#model=WideResNet28_10()
+model_name = "MobileNet"
+model=MobileNet()
 model.compile()
 
+model2=MobileNet()
+model2.compile()
+
 print('Loading pretrained weights for ', model_name, '...', sep='')
-model.load_weights(PATH + model_name + "" + '.h5')
-    
+model.load_weights(PATH + model_name + "_ajustado_1" + '.h5')
+model2.load_weights(PATH + model_name  + '.h5')
+
+
 def mesaImagen(mesa, boleta = 1):
     fname='actas/{0:06d}'.format(mesa*10+boleta)+'.jpg'
     data_name="mesas_rv/"+'{}'.format(mesa)+'.json'
@@ -66,7 +74,7 @@ def CleanRectangles(rects,thresh=25, thresh2=4):
     cleaned_rects_hcenter=np.array(cleaned_rects_hcenter).reshape(-1,1)
     return (cleaned_rects,cleaned_rects_vcenter,cleaned_rects_hcenter)
 
-def extractNumbers(image):
+def extractNumbers(image, model = model):
     # Threshold the image
     ret, im_th = cv2.threshold(image, 90, 255, cv2.THRESH_BINARY_INV)
     im2, ctrs, hier = cv2.findContours(im_th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -119,11 +127,27 @@ def extractNumbers(image):
     
     return numeros, conteos
 
+def plotDigits(ds):
+    mlp.rcParams["figure.figsize"] = (20,10)
+    for i in range(0,len(ds)):
+        plt.subplot(5, np.ceil(len(ds)/5), i+1)
+        plt.imshow(ds[i][4])
+        plt.axis("off")
+        plt.title("{} ( {}% )\n[{}]".format(ds[i][2], np.round(ds[i][3]*100), i ))
+    plt.tight_layout()
+
 
 mesa1 = mesaImagen(1)
-
 plt.imshow(mesa1)
-
 ds, ns = extractNumbers(mesa1)
-
 ns
+ds1b, ns1b = extractNumbers(mesa1, model = model2)
+ns1b
+plotDigits(ds1b)
+
+mesa6 = mesaImagen(6)
+ds, ns = extractNumbers(mesa6)
+ns
+ds6b, ns6b = extractNumbers(mesa6, model = model2)
+ns6b
+plotDigits(ds6b)
