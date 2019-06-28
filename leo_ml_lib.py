@@ -1,24 +1,14 @@
 # Basado en el código de Leonel Aguilar: https://github.com/leaguilar/election_count_helper 
-# import the necessary packages
-from imutils.perspective import four_point_transform
-from imutils import contours
-import imutils
 import cv2
-import pytesseract
-from pytesseract import Output
 import json
-
-from sklearn.externals import joblib
-from skimage.feature import hog
 import numpy as np
-from sklearn.cluster import KMeans
-
 import os
 
 import matplotlib.pyplot as plt
-np.set_printoptions(precision=2)
 import matplotlib as mlp
 import matplotlib.patches
+
+np.set_printoptions(precision=2)
 
 os.chdir("./handwritten_digit_recognition/")
 # from wide_resnet_28_10 import WideResNet28_10
@@ -135,19 +125,3 @@ def plotDigits(ds):
         plt.axis("off")
         plt.title("{} ( {}% )\n[{}]".format(ds[i][2], np.round(ds[i][3]*100), i ))
     plt.tight_layout()
-
-
-mesa1 = mesaImagen(1)
-plt.imshow(mesa1)
-ds, ns = extractNumbers(mesa1)
-ns
-ds1b, ns1b = extractNumbers(mesa1, model = model2)
-ns1b
-plotDigits(ds1b)
-
-mesa6 = mesaImagen(6)
-ds, ns = extractNumbers(mesa6)
-ns
-ds6b, ns6b = extractNumbers(mesa6, model = model2)
-ns6b
-plotDigits(ds6b)
